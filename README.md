@@ -7,9 +7,9 @@
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="assets/images/screenshots/login.png" width="30%" alt="Login"/>
-  <img src="assets/images/screenshots/register.png" width="30%" alt="Register"/>
-  <img src="assets/images/screenshots/permission.png" width="30%" alt="Permission request"/>
+  <img src="assets/screenshots/login.png" width="30%" alt="Login"/>
+  <img src="assets/screenshots/register.png" width="30%" alt="Register"/>
+  <img src="assets/screenshots/permission.png" width="30%" alt="Permission request"/>
 </p>
 
 <p align="center">
