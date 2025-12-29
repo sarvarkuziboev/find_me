@@ -13,9 +13,9 @@
 </p>
 
 <p align="center">
-  <img src="assets/images/screenshots/userslist.png" width="30%" alt="Users list"/>
-  <img src="assets/images/screenshots/map.png" width="30%" alt="Map"/>
-  <img src="assets/images/screenshots/userlocation.png" width="30%" alt="Radar Feature"/>
+  <img src="assets/screenshots/userslist.png" width="30%" alt="Users list"/>
+  <img src="assets/screenshots/map.png" width="30%" alt="Map"/>
+  <img src="assets/screenshots/userlocation.png" width="30%" alt="Radar Feature"/>
 </p>
 
 ---
@@ -24,7 +24,6 @@
 
 * **Real-time Tracking:** See your friends' live locations updated instantly via Firebase Firestore.
 * **Advanced Map Controls:** Integrated with Yandex Mapkit, supporting Zoom In/Out and "My Location" centering.
-* **Multiple Map Layers:** Toggle between **Standard**, **Satellite**, and **Hybrid** views for better navigation.
 * **Friend Radar:** A floating header displays the number of active friends currently nearby.
 * **User Profiles:** Tap on any map marker to see detailed information about the user in a modern Bottom Sheet.
 * **Secure Authentication:** Robust login and registration system powered by Firebase Auth.
