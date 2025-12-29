@@ -15,7 +15,7 @@
 <p align="center">
   <img src="assets/screenshots/userslist.png" width="30%" alt="Users list"/>
   <img src="assets/screenshots/map.png" width="30%" alt="Map"/>
-  <img src="assets/screenshots/userlocation.png" width="30%" alt="Radar Feature"/>
+  <img src="assets/screenshots/userlocation.png" width="30%" alt="User Location"/>
 </p>
 
 ---
@@ -45,4 +45,4 @@ To get a local copy up and running, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/sarvarkuziboev/find_me.git
+   git clone [https://github.com/sarvarkuziboev/find_me.git](https://github.com/sarvarkuziboev/find_me.git)
