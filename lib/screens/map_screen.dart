@@ -4,7 +4,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class MapScreen extends StatefulWidget {
   final Point? startPoint;
-  
+
   const MapScreen({super.key, this.startPoint});
 
   @override
@@ -43,8 +43,8 @@ class _MapScreenState extends State<MapScreen> {
                   icon: PlacemarkIcon.single(
                     PlacemarkIconStyle(
                       image: BitmapDescriptor.fromAssetImage('assets/images/img_marker.png'),
-                      scale: 0.2,
-                      anchor: const Offset(0.5, 1.0),
+                      scale: 0.3,
+                      anchor: const Offset(0.8, 1.0),
                     ),
                   ),
                   onTap: (obj, point) => _showUserDetail(data),
@@ -129,7 +129,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildMapControls() {
     return Positioned(
-      bottom: 40,
+      bottom: 80,
       right: 20,
       child: Column(
         children: [
