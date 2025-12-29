@@ -7,15 +7,15 @@
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="assets/screenshots/auth.png" width="30%" alt="Authentication"/>
-  <img src="assets/screenshots/map_main.png" width="30%" alt="Main Map"/>
-  <img src="assets/screenshots/user_list.png" width="30%" alt="User List"/>
+  <img src="assets/images/screenshots/login.png" width="30%" alt="Login"/>
+  <img src="assets/images/screenshots/register.png" width="30%" alt="Register"/>
+  <img src="assets/images/screenshots/permission.png" width="30%" alt="Permission request"/>
 </p>
 
 <p align="center">
-  <img src="assets/screenshots/map_satellite.png" width="30%" alt="Satellite View"/>
-  <img src="assets/screenshots/user_detail.png" width="30%" alt="User Details"/>
-  <img src="assets/screenshots/radar.png" width="30%" alt="Radar Feature"/>
+  <img src="assets/images/screenshots/userslist.png" width="30%" alt="Users list"/>
+  <img src="assets/images/screenshots/map.png" width="30%" alt="Map"/>
+  <img src="assets/images/screenshots/userlocation.png" width="30%" alt="Radar Feature"/>
 </p>
 
 ---
