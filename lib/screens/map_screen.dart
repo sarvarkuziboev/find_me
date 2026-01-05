@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 class MapScreen extends StatefulWidget {
@@ -14,7 +15,106 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   late YandexMapController _mapController;
   final List<MapObject> _mapObjects = [];
-  final Point _initialPoint = const Point(latitude: 41.6914, longitude: 60.2940);
+
+  Future<void> _moveToCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      await _mapController.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: Point(
+              latitude: position.latitude,
+              longitude: position.longitude,
+            ),
+            zoom: 15,
+          ),
+        ),
+        animation: const MapAnimation(
+          type: MapAnimationType.smooth,
+          duration: 2,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Joylashuvni aniqlab bo'lmadi: $e")),
+      );
+    }
+  }
+
+  void _showUserDetail(Map<String, dynamic> data) {
+    final String email = data['email'] ?? "Unknown User";
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        padding: const EdgeInsets.all(25),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 50,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.blue[100],
+                  child: Text(
+                    email[0].toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        email,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Row(
+                        children: [
+                          Icon(Icons.circle, color: Colors.green, size: 10),
+                          SizedBox(width: 5),
+                          Text(
+                            "Active Now",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 50),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +142,9 @@ class _MapScreenState extends State<MapScreen> {
                   point: Point(latitude: lat, longitude: lon),
                   icon: PlacemarkIcon.single(
                     PlacemarkIconStyle(
-                      image: BitmapDescriptor.fromAssetImage('assets/images/img_marker.png'),
+                      image: BitmapDescriptor.fromAssetImage(
+                        'assets/images/img_marker.png',
+                      ),
                       scale: 0.3,
                       anchor: const Offset(0.8, 1.0),
                     ),
@@ -59,7 +161,9 @@ class _MapScreenState extends State<MapScreen> {
                 mapObjects: _mapObjects,
                 onMapCreated: (controller) {
                   _mapController = controller;
-                  final Point targetPoint = widget.startPoint ?? const Point(latitude: 41.6914, longitude: 41.6914);
+                  final Point targetPoint =
+                      widget.startPoint ??
+                      const Point(latitude: 41.6914, longitude: 41.6914);
                   _mapController.moveCamera(
                     CameraUpdate.newCameraPosition(
                       CameraPosition(target: targetPoint, zoom: 15),
@@ -117,8 +221,21 @@ class _MapScreenState extends State<MapScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Radar Active", style: TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold)),
-                Text("$userCount friends nearby", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text(
+                  "Radar Active",
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "$userCount friends nearby",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
               ],
             ),
           ],
@@ -133,19 +250,29 @@ class _MapScreenState extends State<MapScreen> {
       right: 20,
       child: Column(
         children: [
-          _buildMapButton(Icons.add, () => _mapController.moveCamera(CameraUpdate.zoomIn())),
+          _buildMapButton(
+            Icons.add,
+            () => _mapController.moveCamera(CameraUpdate.zoomIn()),
+          ),
           const SizedBox(height: 10),
-          _buildMapButton(Icons.remove, () => _mapController.moveCamera(CameraUpdate.zoomOut())),
+          _buildMapButton(
+            Icons.remove,
+            () => _mapController.moveCamera(CameraUpdate.zoomOut()),
+          ),
           const SizedBox(height: 10),
           _buildMapButton(Icons.my_location, () {
-            _mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: _initialPoint, zoom: 15)));
+            _moveToCurrentLocation();
           }, isPrimary: true),
         ],
       ),
     );
   }
 
-  Widget _buildMapButton(IconData icon, VoidCallback onTap, {bool isPrimary = false}) {
+  Widget _buildMapButton(
+    IconData icon,
+    VoidCallback onTap, {
+    bool isPrimary = false,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -155,60 +282,14 @@ class _MapScreenState extends State<MapScreen> {
           color: isPrimary ? Colors.blue[800] : Colors.white,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Icon(icon, color: isPrimary ? Colors.white : Colors.blue[800]),
-      ),
-    );
-  }
-
-  void _showUserDetail(Map<String, dynamic> data) {
-    final String email = data['email'] ?? "Unknown User";
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        ),
-        padding: const EdgeInsets.all(25),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(width: 50, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: Colors.blue[100],
-                  child: Text(email[0].toUpperCase(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue[900])),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(email, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 5),
-                      const Row(
-                        children: [
-                          Icon(Icons.circle, color: Colors.green, size: 10),
-                          SizedBox(width: 5),
-                          Text("Active Now", style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 50),
-          ],
-        ),
       ),
     );
   }

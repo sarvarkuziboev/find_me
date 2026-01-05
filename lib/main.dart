@@ -7,7 +7,6 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 import 'firebase/firebase_options.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
-import 'services/AuthService.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

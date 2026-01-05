@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart' as yandex;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,9 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import 'map_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _updateUserLocation().catchError((e) {
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,6 +180,68 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _updateUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showLocationDialog("Lokatsiya o'chiq", "Iltimos, qurilmangizda GPS xizmatini yoqing.");
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showLocationDialog("Ruxsat berilmadi", "Ilovaga joylashuvni aniqlash uchun ruxsat berishingiz kerak.");
+        return;
+      }
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+          'lat': position.latitude,
+          'long': position.longitude,
+          'lastSeen': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (e) {
+      print("Xatolik: $e");
+    }
+  }
+
+  void _showLocationDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        backgroundColor: Colors.white,
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+          TextButton(
+            onPressed: () async {
+              await Geolocator.openLocationSettings();
+              Navigator.pop(context);
+            },
+            child: const Text("Sozlamalar"),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildCoordBadge(IconData icon, String value) {
     return Container(
